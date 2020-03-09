@@ -7,6 +7,8 @@ import pickle
 import os
 import requests
 import bz2
+import random
+import string
 
 m = get_monitors()[0]
 HEIGHT = m.height
@@ -96,6 +98,6 @@ DATA_OUT_FOLDER = 'datasets'
 if DATA_OUT_FOLDER not in ls:
     os.mkdir(DATA_OUT_FOLDER)
 len_files = len(os.listdir(DATA_OUT_FOLDER))
-
-with open('datasets/Dataset' + str(len_files) + '.pkl', 'wb') as f:
+random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
+with open('datasets/ds' + str(len_files) + random_string + '.pkl', 'wb') as f:
     pickle.dump(dataset, f)
