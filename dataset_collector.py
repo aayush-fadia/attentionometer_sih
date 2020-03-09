@@ -86,6 +86,7 @@ while True:
         xcn = 2 * xc / HEIGHT - 1
         ycn = 2 * yc / WIDTH - 1
         dataset.append((eye_region, xcn, ycn, shape))
+        del cap
     elif ret == ord('q'):
         break
     elif ret == ord('c'):
