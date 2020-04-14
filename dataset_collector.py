@@ -74,7 +74,14 @@ def get_eye_region(frame):
             return nimg, shape2
     else:
         print("Face Not Found")
+        return None, None
 
+
+face_not_found_frame = np.ones((40, 250, 3))*255
+lookUpTable = np.empty((1, 256), np.uint8)
+gamma = 0.5
+for i in range(256):
+    lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
 
 while True:
     square_image, xc, yc = get_random_square_image()
@@ -83,11 +90,16 @@ while True:
     if ret == ord(' '):
         cap = cv2.VideoCapture(VIDEO_SOURCE)
         ret, frame = cap.read()
+        frame = cv2.LUT(frame, lookUpTable)
         eye_region, shape = get_eye_region(frame)
-        cv2.imshow('frame', eye_region)
-        xcn = 2 * xc / HEIGHT - 1
-        ycn = 2 * yc / WIDTH - 1
-        dataset.append((eye_region, xcn, ycn, shape))
+        if eye_region is not None:
+            cv2.imshow('frame', eye_region)
+            xcn = 2 * xc / HEIGHT - 1
+            ycn = 2 * yc / WIDTH - 1
+            dataset.append((eye_region, xcn, ycn, shape))
+        else:
+            cv2.putText(face_not_found_frame, "EYES NOT FOUND!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            cv2.imshow('frame', face_not_found_frame)
         del cap
     elif ret == ord('q'):
         break
