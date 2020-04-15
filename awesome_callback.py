@@ -10,7 +10,7 @@ class MyCallback(Callback):
         super().__init__()
         self.save_counter = 0
         self.least_loss = -1
-        os.makedirs(base_dir)
+        os.makedirs(base_dir, exist_ok=True)
         self.base_dir = os.path.join(base_dir, run_name)
         os.makedirs(self.base_dir, exist_ok=True)
         os.makedirs(os.path.join(self.base_dir, "models"), exist_ok=True)
