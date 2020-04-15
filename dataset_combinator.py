@@ -7,15 +7,8 @@ import numpy as np
 import tensorflow as tf
 
 
-def tf_datasets_from_dir(
-        src_dir="datasets/",
-        nrows=3,
-        ncols=6,
-        img_size=(60, 200),
-        batch_size=64,
-        val_fraction=0.15,
-        test_fraction=0.10,
-):
+def tf_datasets_from_dir(src_dir="downloaded_datasets/", nrows=3, ncols=6, img_size=(60, 200), batch_size=64,
+                         val_fraction=0.15, test_fraction=0.10):
     big_dataset = []
     all_imgs = []
     all_labels = []
