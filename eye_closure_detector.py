@@ -4,7 +4,7 @@ from imutils import face_utils
 import imutils
 import dlib
 import cv2
-
+import numpy as np
 
 # define two constants, one for the eye aspect ratio to indicate
 # blink and then a second constant for the number of consecutive
@@ -16,6 +16,7 @@ EYE_AR_CONSEC_FRAMES = 48
 # indicate if the alarm is going off
 COUNTER = 0
 ALARM_ON = False
+
 
 def sound_alarm():
     print("eyes closed!")
@@ -41,11 +42,15 @@ predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 # right eye, respectively
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
-
-cap=cv2.VideoCapture(0)
+lookUpTable = np.empty((1, 256), np.uint8)
+gamma = 0.5
+for i in range(256):
+    lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
+cap = cv2.VideoCapture(0)
 while cap.isOpened():
     ret, frame = cap.read()
     frame = imutils.resize(frame, width=450)
+    frame = cv2.LUT(frame, lookUpTable)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # detect faces in the grayscale frame
     rects = detector(gray, 0)
@@ -98,11 +103,11 @@ while cap.isOpened():
             # thresholds and frame counters
             cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        # show the frame
-        cv2.imshow("Frame", frame)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"):
-            break
+    # show the frame
+    cv2.imshow("Frame", frame)
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break
 # do a bit of cleanup
 cv2.destroyAllWindows()
 del cap
