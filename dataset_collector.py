@@ -51,6 +51,7 @@ def get_random_square_image():
     xc = random.randint(SQUARE_SIZE, HEIGHT - SQUARE_SIZE)
     yc = random.randint(SQUARE_SIZE, WIDTH - SQUARE_SIZE)
     img[xc - SQUARE_SIZE: xc + SQUARE_SIZE, yc - SQUARE_SIZE: yc + SQUARE_SIZE] = 0
+    cv2.putText(img, "Press q to quit", (0, int(img.shape[0] / 2)), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 0))
     return img, xc, yc
 
 
@@ -78,29 +79,34 @@ def get_eye_region(frame):
             ymin = np.min(eyes[:, 1]) - 20
             ymax = np.max(eyes[:, 1]) + 20
             nimg = frame[ymin:ymax, xmin:xmax, :]
-            return nimg, shape2
+            face_crop = frame[rect.top() - 20:rect.bottom() + 20, rect.left() - 20:rect.right() + 20]
+            return nimg, face_crop, shape2
     else:
         print("Face Not Found")
-        return None, None
+        return None, None, None
 
 
 face_not_found_frame = np.ones((40, 250, 3)) * 255
 cv2.putText(face_not_found_frame, "EYES NOT FOUND!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+cv2.namedWindow("frame")
+cv2.namedWindow("look here", cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty("look here", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+eyes = None
 while True:
     square_image, xc, yc = get_random_square_image()
+    if eyes is None:
+        cv2.putText(square_image, "Face Not Found", (int(square_image.shape[1] / 2), int(square_image.shape[0] / 2)),
+                    cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 0, 255))
     cv2.imshow("look here", square_image)
     ret = cv2.waitKey(0)
     if ret == ord(" "):
         cap = cv2.VideoCapture(VIDEO_SOURCE)
         ret, frame = cap.read()
-        eye_region, shape = get_eye_region(frame)
-        if eye_region is not None:
-            cv2.imshow('frame', eye_region)
+        eyes, face, shape = get_eye_region(frame)
+        if eyes is not None:
             xcn = 2 * xc / HEIGHT - 1
             ycn = 2 * yc / WIDTH - 1
-            dataset.append((eye_region, xcn, ycn, shape))
-        else:
-            cv2.imshow('frame', face_not_found_frame)
+            dataset.append({"eyes": eyes, "face": face, "x": xcn, "y": ycn, "shape": shape})
         del cap
     elif ret == ord("q"):
         break

@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 
-def tf_datasets_from_dir(src_dir="downloaded_datasets/", nrows=3, ncols=6, img_size=(60, 200), batch_size=64,
+def tf_datasets_from_dir(src_dir="datasets/", nrows=3, ncols=6, img_size=(60, 200), batch_size=64,
                          val_fraction=0.15, test_fraction=0.10):
     big_dataset = []
     all_imgs = []
@@ -32,9 +32,9 @@ def tf_datasets_from_dir(src_dir="downloaded_datasets/", nrows=3, ncols=6, img_s
         shuffled_indices = np.random.permutation(arr1.shape[0])
         return arr1[shuffled_indices], arr2[shuffled_indices]
 
-    for image, x, y, _ in big_dataset:
-        all_imgs.append(cv2.resize(image, img_size))
-        all_labels.append(coords_to_index(x, y))
+    for item in big_dataset:
+        all_imgs.append(cv2.resize(item["eyes"], img_size))
+        all_labels.append(coords_to_index(item["x"], item["y"]))
 
     total_examples = len(all_imgs)
     all_imgs = np.asarray(all_imgs)
