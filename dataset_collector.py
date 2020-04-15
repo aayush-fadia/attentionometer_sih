@@ -54,11 +54,18 @@ def get_random_square_image():
     return img, xc, yc
 
 
+lookUpTable = np.empty((1, 256), np.uint8)
+gamma = 0.5
+for i in range(256):
+    lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
+
+
 def get_eye_region(frame):
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame_enhanced = cv2.LUT(frame, lookUpTable)
+    gray = cv2.cvtColor(frame_enhanced, cv2.COLOR_BGR2GRAY)
     rects = detector(gray, 1)
     if len(rects) > 0:
-        for (i, rect) in enumerate(rects):
+        for rect in rects:
             shape = predictor(gray, rect)
             shape = shape_to_np(shape)
             eyes = shape[36:48]
@@ -77,12 +84,8 @@ def get_eye_region(frame):
         return None, None
 
 
-face_not_found_frame = np.ones((40, 250, 3))*255
-lookUpTable = np.empty((1, 256), np.uint8)
-gamma = 0.5
-for i in range(256):
-    lookUpTable[0, i] = np.clip(pow(i / 255.0, gamma) * 255.0, 0, 255)
-
+face_not_found_frame = np.ones((40, 250, 3)) * 255
+cv2.putText(face_not_found_frame, "EYES NOT FOUND!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 while True:
     square_image, xc, yc = get_random_square_image()
     cv2.imshow("look here", square_image)
@@ -90,7 +93,6 @@ while True:
     if ret == ord(" "):
         cap = cv2.VideoCapture(VIDEO_SOURCE)
         ret, frame = cap.read()
-        frame = cv2.LUT(frame, lookUpTable)
         eye_region, shape = get_eye_region(frame)
         if eye_region is not None:
             cv2.imshow('frame', eye_region)
@@ -98,7 +100,6 @@ while True:
             ycn = 2 * yc / WIDTH - 1
             dataset.append((eye_region, xcn, ycn, shape))
         else:
-            cv2.putText(face_not_found_frame, "EYES NOT FOUND!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             cv2.imshow('frame', face_not_found_frame)
         del cap
     elif ret == ord("q"):
