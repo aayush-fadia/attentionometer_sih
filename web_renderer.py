@@ -22,7 +22,7 @@ class MyBrowser(wx.Frame):
         self.browser.Bind(wx.html2.EVT_WEBVIEW_NAVIGATING, self.printUrl)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = wx.App()
     dialog = MyBrowser(None, -1)
     dialog.browser.LoadURL("https://www.greatlearning.in/")

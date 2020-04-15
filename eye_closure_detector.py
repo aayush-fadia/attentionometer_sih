@@ -1,4 +1,8 @@
 # import the necessary packages
+import cv2
+import dlib
+import imutils
+from imutils import face_utils
 from scipy.spatial import distance as dist
 from imutils import face_utils
 import imutils
@@ -37,7 +41,7 @@ def eye_aspect_ratio(eye):
 
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 # grab the indexes of the facial landmarks for the left and
 # right eye, respectively
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
@@ -91,8 +95,15 @@ while cap.isOpened():
                         # sound played in the background
                         sound_alarm()
                     # draw an alarm on the frame
-                    cv2.putText(frame, "DROWSINESS ALERT!", (10, 30),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                    cv2.putText(
+                        frame,
+                        "DROWSINESS ALERT!",
+                        (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.7,
+                        (0, 0, 255),
+                        2,
+                    )
             # otherwise, the eye aspect ratio is not below the blink
             # threshold, so reset the counter and alarm
             else:

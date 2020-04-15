@@ -1,23 +1,23 @@
-import cv2
-import numpy as np
-import dlib
-from screeninfo import get_monitors
-import random
-import pickle
-import os
-import requests
 import bz2
+import os
+import pickle
 import random
 import string
+
+import cv2
+import dlib
+import numpy as np
+import requests
+from screeninfo import get_monitors
 
 m = get_monitors()[0]
 HEIGHT = m.height
 WIDTH = m.width
 DELAY = 100
 SQUARE_SIZE = 30
-COMPRESSED_FILENAME = 'shape_predictor_68_face_landmarks.dat.bz2'
-EXTRACTED_FILENAME = 'shape_predictor_68_face_landmarks.dat'
-URL = 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2'
+COMPRESSED_FILENAME = "shape_predictor_68_face_landmarks.dat.bz2"
+EXTRACTED_FILENAME = "shape_predictor_68_face_landmarks.dat"
+URL = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
 VIDEO_SOURCE = 0
 
 
@@ -29,18 +29,18 @@ def shape_to_np(shape, dtype="int"):
 
 
 detector = dlib.get_frontal_face_detector()
-ls = os.listdir('.')
+ls = os.listdir(".")
 if EXTRACTED_FILENAME not in ls:
     if COMPRESSED_FILENAME not in ls:
-        print('Downloading File')
+        print("Downloading File")
         myfile = requests.get(URL)
-        open(COMPRESSED_FILENAME, 'wb').write(myfile.content)
+        open(COMPRESSED_FILENAME, "wb").write(myfile.content)
     print("Extracting File")
     zipfile = bz2.BZ2File(COMPRESSED_FILENAME)
     data = zipfile.read()
-    open(EXTRACTED_FILENAME, 'wb').write(data)
+    open(EXTRACTED_FILENAME, "wb").write(data)
 
-print('File Found.')
+print("File Found.")
 predictor = dlib.shape_predictor(EXTRACTED_FILENAME)
 dataset = []
 
@@ -50,7 +50,7 @@ def get_random_square_image():
     img[:, :, :] = 255
     xc = random.randint(SQUARE_SIZE, HEIGHT - SQUARE_SIZE)
     yc = random.randint(SQUARE_SIZE, WIDTH - SQUARE_SIZE)
-    img[xc - SQUARE_SIZE:xc + SQUARE_SIZE, yc - SQUARE_SIZE:yc + SQUARE_SIZE] = 0
+    img[xc - SQUARE_SIZE: xc + SQUARE_SIZE, yc - SQUARE_SIZE: yc + SQUARE_SIZE] = 0
     return img, xc, yc
 
 
@@ -85,9 +85,9 @@ for i in range(256):
 
 while True:
     square_image, xc, yc = get_random_square_image()
-    cv2.imshow('look here', square_image)
+    cv2.imshow("look here", square_image)
     ret = cv2.waitKey(0)
-    if ret == ord(' '):
+    if ret == ord(" "):
         cap = cv2.VideoCapture(VIDEO_SOURCE)
         ret, frame = cap.read()
         frame = cv2.LUT(frame, lookUpTable)
@@ -101,15 +101,15 @@ while True:
             cv2.putText(face_not_found_frame, "EYES NOT FOUND!", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             cv2.imshow('frame', face_not_found_frame)
         del cap
-    elif ret == ord('q'):
+    elif ret == ord("q"):
         break
-    elif ret == ord('c'):
+    elif ret == ord("c"):
         continue
 
-DATA_OUT_FOLDER = 'datasets'
+DATA_OUT_FOLDER = "datasets"
 if DATA_OUT_FOLDER not in ls:
     os.mkdir(DATA_OUT_FOLDER)
 len_files = len(os.listdir(DATA_OUT_FOLDER))
-random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
-with open('datasets/ds' + str(len_files) + random_string + '.pkl', 'wb') as f:
+random_string = "".join(random.choices(string.ascii_letters + string.digits, k=5))
+with open("datasets/ds" + str(len_files) + random_string + ".pkl", "wb") as f:
     pickle.dump(dataset, f)
