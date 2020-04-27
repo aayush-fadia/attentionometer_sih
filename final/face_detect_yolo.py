@@ -5,20 +5,13 @@ CONF_THRESHOLD = 0.5
 NMS_THRESHOLD = 0.4
 IMG_WIDTH = 416
 IMG_HEIGHT = 416
-COLOR_BLUE = (255, 0, 0)
-COLOR_GREEN = (0, 255, 0)
-COLOR_RED = (0, 0, 255)
-COLOR_WHITE = (255, 255, 255)
-COLOR_YELLOW = (0, 255, 255)
-net = cv2.dnn.readNetFromDarknet('yolov3-face.cfg', 'yolov3-wider_16000.weights')
+net = cv2.dnn.readNetFromDarknet('/home/aayush/SIH/attentionometer_sih/yolo_face_detect/yolov3-face.cfg',
+                                 '/home/aayush/SIH/attentionometer_sih/yolo_face_detect/yolov3-wider_16000.weights')
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
-cap = cv2.VideoCapture(0)
 
-
-def get_outputs_names(net):
-    layers_names = net.getLayerNames()
-    return [layers_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+layers_names = net.getLayerNames()
+output_names = [layers_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 
 def refined_box(left, top, width, height):
@@ -35,20 +28,6 @@ def refined_box(left, top, width, height):
     right = right + margin
 
     return left, top, right, bottom
-
-
-def draw_predict(frame, conf, left, top, right, bottom):
-    # Draw a bounding box.
-    cv2.rectangle(frame, (left, top), (right, bottom), COLOR_YELLOW, 2)
-
-    text = '{:.2f}'.format(conf)
-
-    # Display the label at the top of the bounding box
-    label_size, base_line = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-
-    top = max(top, label_size[1])
-    cv2.putText(frame, text, (left, top - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.4,
-                COLOR_WHITE, 1)
 
 
 def post_process(frame, outs, conf_threshold, nms_threshold):
@@ -73,7 +52,7 @@ def post_process(frame, outs, conf_threshold, nms_threshold):
                 boxes.append([left, top, width, height])
     indices = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold,
                                nms_threshold)
-
+    faces = []
     for i in indices:
         i = i[0]
         box = boxes[i]
@@ -83,21 +62,35 @@ def post_process(frame, outs, conf_threshold, nms_threshold):
         height = box[3]
         final_boxes.append(box)
         left, top, right, bottom = refined_box(left, top, width, height)
-        draw_predict(frame, confidences[i], left, top, right, bottom)
-    return final_boxes
+        faces.append(((top, left), (bottom, right)))
+    return faces[0] if len(faces) > 0 else None
 
 
-while True:
-    ret, frame = cap.read()
+def get_face_rect_yolo(frame):
+    """
+    Get face rectangle using a YOLO face detector, on a CLAHE enhanced image.
+    :param frame: RGB frame from the webcam
+    :return: Two Tuples (points) (top, left), (bottom, right)
+    """
     blob = cv2.dnn.blobFromImage(frame, 1 / 255, (IMG_WIDTH, IMG_HEIGHT),
                                  [0, 0, 0], 1, crop=False)
     net.setInput(blob)
-    outs = net.forward(get_outputs_names(net))
-    faces = post_process(frame, outs, CONF_THRESHOLD, NMS_THRESHOLD)
-    cv2.imshow('frame', frame)
-    key = cv2.waitKey(1)
-    if key == 27 or key == ord('q'):
-        print('[i] ==> Interrupted by user!')
-        break
-cap.release()
-cv2.destroyAllWindows()
+    outs = net.forward(output_names)
+    face = post_process(frame, outs, CONF_THRESHOLD, NMS_THRESHOLD)
+    return face
+
+
+def draw_face_rect(frame, face_rect):
+    if face_rect is not None:
+        (t, l), (b, r) = face_rect
+        cv2.rectangle(frame, (l, t), (r, b), (0, 0, 0))
+
+
+if __name__ == '__main__':
+    cap = cv2.VideoCapture(1)
+    while cap.isOpened():
+        ret, frame = cap.read()
+        face = get_face_rect_yolo(frame)
+        draw_face_rect(frame, face)
+        cv2.imshow('frame', frame)
+        cv2.waitKey(1)
