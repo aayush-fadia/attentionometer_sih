@@ -2,10 +2,9 @@ from collections import deque
 
 import cv2
 
-from face_detect_dlib import get_face_rect_dlib
-from face_keypoint_predict_dlib import get_face_keypoints
 from New_eye_closure import Is_eye_closed
-from face_keypoint_predict_dlib import draw_face_keypoints
+from face_detect_dlib import get_face_rect_dlib
+from face_keypoint_predict_dlib import get_face_keypoints, draw_face_keypoints
 
 EVERY_N_FRAMES = 20
 NUM_FRAMES_PASSED = 0
@@ -41,5 +40,5 @@ while cap.isOpened():
     if len(CONSEC_FRAMES) == TOTAL_FRAMES:
         is_eye_closed = Is_eye_closed(CONSEC_FRAMES)
         ## lip_variance = CALL LIP VARIANCE (list(CONSEC_FRAMES)) ##
-    # draw_face_keypoints(frame, face_keypoints) ()
+    draw_face_keypoints(frame, face_keypoints)
     show_output(frame)

@@ -14,7 +14,7 @@ def shape_to_np(shape, dtype="int"):
 
 def get_face_keypoints(frame, face_rect):
     (t, l), (r, b) = face_rect
-    dlib_rect = dlib.rectangle(l, t, r, b)
+    dlib_rect = dlib.rectangle(l, t, b, r)
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     face_shape = predictor(frame, dlib_rect)
     face_shape = shape_to_np(face_shape)
