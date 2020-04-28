@@ -27,7 +27,6 @@ def show_output(frame):
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     ret, frame = cap.read()
-    frame = cv2.flip(frame, 1)
     face_rect = get_face_rect_dlib(frame)
     if face_rect is None:
         print("No Face Found!")
