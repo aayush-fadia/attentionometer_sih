@@ -60,13 +60,7 @@ def Is_eye_closed(VideoFeed):
         # threshold, so reset the counter and alarm
         else:
             COUNTER = 0
-
-
-        # show the frame
-        #cv2.imshow("Frame", frame)
-        #key = cv2.waitKey(1) & 0xFF
-        #if key == ord("q"):
-            #break
+            
     # do a bit of cleanup
     cv2.destroyAllWindows()
     return ans
