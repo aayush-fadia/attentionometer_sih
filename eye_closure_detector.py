@@ -39,6 +39,7 @@ def eye_aspect_ratio(eye):
     # return the eye aspect ratio
     return ear
 
+for key in 
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
