@@ -1,5 +1,9 @@
 import os
 
+import os
+prev_folder = os.path.normpath(os.getcwd() + os.sep + os.pardir)
+lc_model_file = os.path.join(prev_folder, 'gaze-models/model_lc.h5')
+rc_model_file = os.path.join(prev_folder, 'gaze-models/model_rc.h5')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # or even "-1"
 
@@ -7,8 +11,8 @@ import numpy as np
 from tensorflow.keras.models import load_model
 import cv2
 
-lc_model = load_model("/home/aayush/SIH/mpii-gaze/saved_models/fconv2.ADO.lc.12:24Apr19/vacc_best.h5")
-rc_model = load_model("/home/aayush/SIH/mpii-gaze/saved_models/fconv2.ADO.rc.14:49Apr20/vacc_best.h5")
+lc_model = load_model(lc_model_file)
+rc_model = load_model(rc_model_file)
 
 
 def get_eye_region_boundaries(face_keypoints):
