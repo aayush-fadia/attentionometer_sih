@@ -1,3 +1,4 @@
+
 import cv2
 import numpy as np
 face_cascade=cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -19,4 +20,5 @@ while(cap.isOpened()):
     if cv2.waitKey(1)==ord('q'):
         break
 cap.release()
+
 cv2.destroyAllWindows()
