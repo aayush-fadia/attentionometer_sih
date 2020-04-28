@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+predictor = dlib.shape_predictor("../shape_predictor_68_face_landmarks.dat")
 EYE_AR_THRESH = 0.25
 EYE_AR_CONSEC_FRAMES = 48
 # initialize the frame counter
@@ -47,7 +47,7 @@ def Is_eye_closed(VideoFeed):
         rightEAR = eye_aspect_ratio(rightEye)
         # average the eye aspect ratio together for both eyes
         ear = (leftEAR + rightEAR) / 2.0
-
+        # print("ear ",i,": ",ear)
         # check to see if the eye aspect ratio is below the blink
         # threshold, and if so, increment the blink frame counter
         if ear < EYE_AR_THRESH:
@@ -60,4 +60,6 @@ def Is_eye_closed(VideoFeed):
             counter = 0
 
     # do a bit of cleanup
+    if ans == 1:
+        print("eyes closed")
     return ans
