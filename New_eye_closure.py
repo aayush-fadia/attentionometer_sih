@@ -16,8 +16,6 @@ EYE_AR_CONSEC_FRAMES = 48
 # initialize the frame counter
 COUNTER = 0
 
-#def sound_alarm():
-#    print("eyes closed!")
 
 
 def eye_aspect_ratio(eye):
