@@ -9,7 +9,7 @@ from face_keypoint_predict_dlib import get_face_keypoints, draw_face_keypoints
 EVERY_N_FRAMES = 20
 NUM_FRAMES_PASSED = 0
 TOTAL_FRAMES = 48
-CONSEC_FRAMES = deque(maxlen=TOTAL_FRAMES)
+frame_buffer = deque(maxlen=TOTAL_FRAMES)
 is_eye_closed = 0
 is_eye_closed_weight = 1.0
 lip_variance = 0.0
@@ -36,9 +36,9 @@ while cap.isOpened():
     if NUM_FRAMES_PASSED == EVERY_N_FRAMES:
         ## eye_gaze_variance = CALL EYE GAZE VARIANCE ##
         NUM_FRAMES_PASSED = 0
-    CONSEC_FRAMES.append(face_keypoints)
-    if len(CONSEC_FRAMES) == TOTAL_FRAMES:
-        is_eye_closed = Is_eye_closed(CONSEC_FRAMES)
+    frame_buffer.append(face_keypoints)
+    if len(frame_buffer) == TOTAL_FRAMES:
+        is_eye_closed = Is_eye_closed(frame_buffer)
         ## lip_variance = CALL LIP VARIANCE (list(CONSEC_FRAMES)) ##
     draw_face_keypoints(frame, face_keypoints)
     show_output(frame)
