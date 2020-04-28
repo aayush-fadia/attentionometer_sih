@@ -5,6 +5,7 @@ import cv2
 from New_eye_closure import Is_eye_closed
 from face_detect_dlib import get_face_rect_dlib
 from face_keypoint_predict_dlib import get_face_keypoints, draw_face_keypoints
+from gaze_detector import predict_column
 
 EVERY_N_FRAMES = 20
 NUM_FRAMES_PASSED = 0
@@ -40,5 +41,7 @@ while cap.isOpened():
     if len(frame_buffer) == TOTAL_FRAMES:
         is_eye_closed = Is_eye_closed(frame_buffer)
         ## lip_variance = CALL LIP VARIANCE (list(CONSEC_FRAMES)) ##
+    gaze_column = predict_column(frame, face_keypoints)
     draw_face_keypoints(frame, face_keypoints)
+    print(gaze_column)
     show_output(frame)
