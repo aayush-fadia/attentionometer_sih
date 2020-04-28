@@ -23,9 +23,9 @@ def shape_to_np(shape, dtype="int"):
 
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor("/home/aayush/SIH/attentionometer_sih/shape_predictor_68_face_landmarks.dat")
-lc_model = load_model("/home/aayush/SIH/mpii-gaze/saved_models/fconv2.ADO.lc.12:24Apr19/vacc_best.h5")
-rc_model = load_model("/home/aayush/SIH/mpii-gaze/saved_models/fconv2.ADO.rc.14:49Apr20/vacc_best.h5")
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+lc_model = load_model("gaze-models/model_lc.h5")
+rc_model = load_model("gaze-models/model_rc.h5")
 EYE = 'left'
 
 
