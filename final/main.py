@@ -1,7 +1,8 @@
 import cv2
 
 from face_detect_dlib import get_face_rect_dlib
-from face_keypoint_predict_dlib import get_face_keypoints, draw_face_keypoints
+from face_keypoint_predict_dlib import get_face_keypoints
+from gaze_detector import predict_column
 
 EVERY_N_FRAMES = 20
 NUM_FRAMES_PASSED = 0
@@ -30,7 +31,6 @@ while cap.isOpened():
         show_output(frame)
         continue
     face_keypoints = get_face_keypoints(frame, face_rect)
-    draw_face_keypoints(frame, face_keypoints)
     NUM_FRAMES_PASSED += 1
     if NUM_FRAMES_PASSED == EVERY_N_FRAMES:
         ## eye_gaze_variance = CALL EYE GAZE VARIANCE ##
@@ -44,5 +44,5 @@ while cap.isOpened():
         ## lip_variance = CALL LIP VARIANCE (CONSEC_FRAMES) ##
         CONSEC_FRAMES = []
         NUM_FRAMES_COLLECTED = 0
-
+    print(predict_column(frame, face_keypoints))
     show_output(frame)
