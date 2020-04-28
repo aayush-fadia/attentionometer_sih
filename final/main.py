@@ -4,6 +4,7 @@ import cv2
 
 from face_detect_dlib import get_face_rect_dlib
 from face_keypoint_predict_dlib import get_face_keypoints
+from New_eye_closure import Is_eye_closed
 
 FILL_MEMORY = False
 EVERY_N_FRAMES = 20
@@ -40,6 +41,6 @@ while cap.isOpened():
     CONSEC_FRAMES.append(face_keypoints)
     if len(CONSEC_FRAMES) == TOTAL_FRAMES:
         pass
-        ## is_eye_closed = CALL EYE CLOSURE (list(CONSEC_FRAMES)) ##
+        is_eye_closed = Is_eye_closed(CONSEC_FRAMES)
         ## lip_variance = CALL LIP VARIANCE (list(CONSEC_FRAMES)) ##
     show_output(frame)
