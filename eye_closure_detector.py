@@ -52,7 +52,7 @@ for i in range(256):
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     ret, frame = cap.read()
-    frame = imutils.resize(frame, width=450)
+    # frame = imutils.resize(frame, width=450)
     frame = cv2.LUT(frame, lookUpTable)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # detect faces in the grayscale frame
