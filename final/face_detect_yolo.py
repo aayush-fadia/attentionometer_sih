@@ -80,10 +80,10 @@ def get_face_rect_yolo(frame):
     return face
 
 
-def draw_face_rect(frame, face_rect):
+def draw_face_rect_yolo(frame, face_rect):
     if face_rect is not None:
         (t, l), (b, r) = face_rect
-        cv2.rectangle(frame, (l, t), (r, b), (0, 0, 0))
+        cv2.rectangle(frame, (l, t), (r, b), (0, 0, 255))
 
 
 if __name__ == '__main__':

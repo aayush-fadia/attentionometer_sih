@@ -17,10 +17,10 @@ def get_face_rect_dlib(frame):
     return ((rects[0].top(), rects[0].left()), (rects[0].bottom(), rects[0].right())) if len(rects) > 0 else None
 
 
-def draw_face_rect(frame, face_rect):
+def draw_face_rect_dlib(frame, face_rect):
     if face_rect is not None:
         (t, l), (b, r) = face_rect
-        cv2.rectangle(frame, (l, t), (r, b), (0, 0, 0))
+        cv2.rectangle(frame, (l, t), (r, b), (255, 0, 0))
 
 
 if __name__ == '__main__':
