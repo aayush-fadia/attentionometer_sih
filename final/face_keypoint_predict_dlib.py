@@ -1,6 +1,7 @@
 import cv2
 import dlib
 import numpy as np
+from imutils import face_utils
 
 predictor = dlib.shape_predictor('../shape_predictor_68_face_landmarks.dat')
 
@@ -17,7 +18,7 @@ def get_face_keypoints(frame, face_rect):
     dlib_rect = dlib.rectangle(l, t, b, r)
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     face_shape = predictor(frame, dlib_rect)
-    face_shape = shape_to_np(face_shape)
+    face_shape = face_utils.shape_to_np(face_shape)
     return face_shape
 
 

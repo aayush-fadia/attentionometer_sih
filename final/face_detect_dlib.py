@@ -13,7 +13,7 @@ def get_face_rect_dlib(frame):
     """
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = clahe.apply(gray)
-    rects = detector(gray, 1)
+    rects = detector(gray, 0)
     return ((rects[0].top(), rects[0].left()), (rects[0].bottom(), rects[0].right())) if len(rects) > 0 else None
 
 

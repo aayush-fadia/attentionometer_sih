@@ -1,5 +1,7 @@
 import os
-
+this_folder = os.path.normpath(os.getcwd())
+lc_model_file = os.path.join(this_folder, 'gaze-models/model_lc.h5')
+rc_model_file = os.path.join(this_folder, 'gaze-models/model_rc.h5')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # or even "-1"
 
