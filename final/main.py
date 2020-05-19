@@ -4,6 +4,7 @@ import cv2
 
 from New_eye_closure import Is_eye_closed
 from face_detect_dlib import get_face_rect_dlib
+from face_detect_yolo import get_face_rect_yolo
 from face_keypoint_predict_dlib import get_face_keypoints, draw_face_keypoints
 from gaze_detector import predict_column
 from lip_var import get_lip_var
@@ -28,7 +29,7 @@ def show_output(frame):
 cap = cv2.VideoCapture(0)
 while cap.isOpened():
     ret, frame = cap.read()
-    face_rect = get_face_rect_dlib(frame)
+    face_rect = get_face_rect_yolo(frame)
     if face_rect is None:
         print("No Face Found!")
         show_output(frame)
