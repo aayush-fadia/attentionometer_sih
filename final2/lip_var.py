@@ -28,3 +28,12 @@ def get_lip_var(all_frames):
     variance = np.var(distances)
     print("variance:", variance)
     return variance
+
+
+def get_lip_var2(distances, current_keypoints):
+    mouth = current_keypoints[48:60]
+    total_distance = get_tot_dist(mouth)
+    if len(distances) == 0:
+        return -1, total_distance
+    variance = np.var(distances + [total_distance])
+    return variance, total_distance
