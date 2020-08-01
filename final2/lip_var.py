@@ -38,5 +38,5 @@ def get_lip_var2(distances, current_keypoints):
     total_distance = get_tot_dist(mouth)
     if len(distances) == 0:
         return -1, total_distance
-    variance = np.var(distances + [total_distance])
+    variance = np.var(list(distances) + [total_distance])
     return variance, total_distance
