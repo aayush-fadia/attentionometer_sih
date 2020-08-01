@@ -9,11 +9,14 @@ import threading
 lock = RLock()
 buffer = defaultdict(lambda: deque(maxlen=48))
 db = DataBase("Teacher")
-
+oldi = -1
+oldname = ""
 
 def process_and_upload(enumframes):
     i, frame = enumframes
+
     name = get_name2(frame)
+
     landmarks = get_face_keypoints(frame)
     if landmarks is not None:
         cur_attention = calculate_attention(landmarks)
