@@ -11,7 +11,6 @@ def get_face_keypoints(frame):
 
 
 def calculate_attention(keypoints):
-    print("Getting atention")
     if keypoints is None:
         return -1
     keypoints = keypoints[0]
