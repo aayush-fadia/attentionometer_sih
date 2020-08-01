@@ -3,10 +3,11 @@ from landmarks3d import get_face_keypoints, calculate_attention
 from lip_var import get_lip_var2
 from collections import defaultdict, deque
 from multiprocessing import RLock
+from Database import DataBase
 
 lock = RLock()
 buffer = defaultdict(lambda: deque(maxlen=48))
-
+db = DataBase("Teacher")
 
 def process_and_upload(enumframes):
     i, frame = enumframes
@@ -25,4 +26,5 @@ def process_and_upload(enumframes):
     if variance!=-1:
         cur_attention+=(0.001*variance)
 
-    print("UPLOAD {} FOR {}".format(cur_attention, name))
+    #print("UPLOAD {} FOR {}".format(cur_attention, name))
+    db.insert_data(name, cur_attention)
