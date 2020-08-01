@@ -31,6 +31,8 @@ def get_lip_var(all_frames):
 
 
 def get_lip_var2(distances, current_keypoints):
+    if current_keypoints is None:
+        return -1, -1
     mouth = current_keypoints[48:60]
     total_distance = get_tot_dist(mouth)
     if len(distances) == 0:

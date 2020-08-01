@@ -18,6 +18,7 @@ def calculate_attention(keypoints):
     mean_pos = np.mean(keypoints, 0)
     nose_pos = (keypoints[31] + keypoints[34]) / 2
     orientation_diff = nose_pos - mean_pos
+    # print("Attention:", orientation_diff[2] / np.linalg.norm(orientation_diff))
     return orientation_diff[2] / np.linalg.norm(orientation_diff)
 
 # plt.ion()

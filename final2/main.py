@@ -13,11 +13,14 @@ def show_images(imgs):
         cv2.imshow('img{}'.format(i), img)
 
 
-cap = cv2.VideoCapture("../FinalCut.mp4")
+cap = cv2.VideoCapture("glrec.mp4")
+i=0
 while cap.isOpened():
     ret, frame = cap.read()
     cv2.imshow("frame", frame)
     cv2.waitKey(1)
-    imgs = chop(frame)
-    with ThreadPoolExecutor() as master:
-        master.map(process_and_upload, imgs)
+    if i>3000:
+        imgs = chop(frame)
+        with ThreadPoolExecutor() as master:
+            master.map(process_and_upload, enumerate(imgs))
+    i+=1
