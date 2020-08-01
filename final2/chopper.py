@@ -15,12 +15,12 @@ h = FRAME_SIZE[1]
 w = FRAME_SIZE[0]
 slices = {
     6: [
-        Slicer()[:int(h / 2), :int(w / 3)],
-        Slicer()[:int(h / 2), int(w / 3):2 * int(w / 3)],
-        Slicer()[:int(h / 2), 2 * int(w / 3):],
-        Slicer()[int(h / 2):, :int(w / 3)],
-        Slicer()[int(h / 2):, int(w / 3):2 * int(w / 3)],
-        Slicer()[int(h / 2):, 2 * int(w / 3):],
+        Slicer()[int((h / 2) - (h / 3)):int(h / 2), :int(w / 3)],
+        Slicer()[int((h / 2) - (h / 3)):int(h / 2), int(w / 3):2 * int(w / 3)],
+        Slicer()[int((h / 2) - (h / 3)):int(h / 2), 2 * int(w / 3):],
+        Slicer()[int(h / 2):int((h / 2) + (h / 3)), :int(w / 3)],
+        Slicer()[int(h / 2):int((h / 2) + (h / 3)), int(w / 3):2 * int(w / 3)],
+        Slicer()[int(h / 2):int((h / 2) + (h / 3)):, 2 * int(w / 3):],
     ],
     7: [
         Slicer()[:int(h / 3), :int(w / 3)],
