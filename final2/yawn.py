@@ -15,7 +15,7 @@ def isYawn(kps):
     ver = dist.euclidean(top, bottom)
     ratio = ver / hor
     # print(ratio)
-    if ratio >= 0.67:
+    if ratio >= 0.9:
         return True
     else:
         return False
