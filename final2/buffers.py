@@ -6,13 +6,16 @@ import Levenshtein
 
 class Buffer:
     def __init__(self, MAX_FRAMES=20):
+        self.MAX_FRAMES = MAX_FRAMES
         self.lip_distances = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.orientation_vectors = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
-        self.attention_scores = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
+        self.orientation_scores = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.lip_variances = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.yawns = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.nods = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.presences = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
+        self.attention_scores = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
+        self.attention_classes = defaultdict(lambda: deque(maxlen=MAX_FRAMES))
         self.num_people = -1
         self.all_people = set()
         self.this_frame_people = set()
@@ -24,8 +27,8 @@ class Buffer:
     def add_orientation_vector(self, name, vect):
         self.orientation_vectors[name].append(vect)
 
-    def add_attention_score(self, name, score):
-        self.attention_scores[name].append(score)
+    def add_orientation_score(self, name, score):
+        self.orientation_scores[name].append(score)
 
     def add_variance(self, name, variance):
         self.lip_variances[name].append(variance)
@@ -45,6 +48,12 @@ class Buffer:
 
     def reset_people(self):
         self.this_frame_people = set()
+
+    def add_attention_score(self, name, score):
+        self.attention_scores[name].append(score)
+
+    def add_attention_class(self, name, clas):
+        self.attention_classes[name].append(clas)
 
     def set_pressences(self):
         for name in self.all_people:

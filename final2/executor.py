@@ -18,13 +18,13 @@ def process_and_upload(frame, buffer):
         # Primary Calculations
         landmarks = landmarks[0]
         cur_vect = calculate_vector(landmarks)
-        cur_attention = calculate_attention(cur_vect)
+        cur_orientation = calculate_attention(cur_vect)
         dist = get_lip_dist(landmarks)
         yawn = isYawn(landmarks)
         # Buffer Primary Values
         buffer.add_lip_dist(name, dist)
         buffer.add_orientation_vector(name, cur_vect)
-        buffer.add_attention_score(name, cur_attention)
+        buffer.add_orientation_score(name, cur_orientation)
         buffer.add_yawn(name, yawn)
         # Secondary Calculations
         variance = get_lip_variance(buffer.lip_distances[name])
@@ -32,6 +32,6 @@ def process_and_upload(frame, buffer):
         # Buffer Secondary Values
         buffer.add_variance(name, variance)
         buffer.add_nod(name, nod)
-        # t1 = threading.Thread(target=db.insert_data, args=(name[0:-1], cur_attention))
+        # t1 = threading.Thread(target=db.insert_data, args=(name[0:-1], cur_orientation))
         # t1.start()
-        # print("Uploading {}attention for {}".format(cur_attention, name))
+        # print("Uploading {}attention for {}".format(cur_orientation, name))
