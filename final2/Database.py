@@ -20,7 +20,7 @@ def init_db():
 
 
 class DataBase:
-    def __init__(self, nameList) -> None:
+    def __init__(self) -> None:
         self.db = init_db()
         self.db.remove()
         self.scoreDict = {}
@@ -30,11 +30,13 @@ class DataBase:
         self.avgCounter = 0
         self.id = str(datetime.now().strftime("%d-%m-%Y-%H:%M:%S"))
         self.db.child("online").set(self.id)
-        for name in nameList:
-            self.oldScore[name] = -1
-            self.oldCategory[name] = -1
 
     def insert_data(self, classesDict, attentionDict):
+        for name in classesDict.keys():
+            if name not in self.oldScore.keys():
+                self.oldScore[name] = -1
+                self.oldCategory[name] = -1
+
         for name in classesDict.keys():
             if self.oldCategory[name] != classesDict[name]:
                 student_data = {name: classesDict[name].value}
