@@ -1,5 +1,6 @@
 from concurrent.futures.thread import ThreadPoolExecutor
 from itertools import repeat
+from threading import Thread
 
 import cv2
 
@@ -15,14 +16,25 @@ def show_images(imgs):
 
 
 buffer = Buffer()
+frame = None
 cap = cv2.VideoCapture("../FinalCut.mp4")
-while cap.isOpened():
-    ret, frame = cap.read()
-    cv2.imshow("frame", frame)
-    cv2.waitKey(1)
+
+
+def process_frame():
     imgs = chop(frame)
     buffer.reset_people()
     with ThreadPoolExecutor() as master:
         master.map(process_and_upload, imgs, repeat(buffer))
     classes = classify(buffer)
     buffer.set_pressences()
+
+
+processingThread = Thread(target=process_frame)
+while True:
+    ret, frame = cap.read()
+    cv2.imshow('frame', frame)
+    cv2.waitKey(1)
+    if not processingThread.is_alive():
+        cv2.imshow('processing', frame)
+        processingThread = Thread(target=process_frame)
+        processingThread.start()
