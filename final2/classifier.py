@@ -19,14 +19,14 @@ def classify(buffer):
     for name in buffer.this_frame_people:
         if sum(buffer.presences) < buffer.MAX_FRAMES / 2:
             classes[name] = AttentionClass.UNKNOWN
-            scores[name] = buffer.sco
+            scores[name] = -1
             continue
         mean_var = np.mean(buffer.lip_variances[name]) if len(buffer.lip_variances[name]) != 0 else 0
         mean_orient = np.mean(buffer.orientation_scores[name]) if len(buffer.orientation_scores[name]) != 0 else 0.5
         if any(buffer.yawns[name]):
             classes[name] = AttentionClass.DROWSY
             print("{} : DROWSY".format(name))
-        elif ((mean_var>100) or any(buffer.nods[name])) and mean_orient >= 0.6:
+        elif ((mean_var > 100) or any(buffer.nods[name])) and mean_orient >= 0.6:
             classes[name] = AttentionClass.INTERACTIVE
             print("{} : INTERACTIVE".format(name))
         elif mean_orient >= 0.6:
