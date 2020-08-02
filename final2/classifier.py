@@ -25,14 +25,16 @@ def classify(buffer):
         mean_orient = np.mean(buffer.orientation_scores[name]) if len(buffer.orientation_scores[name]) != 0 else 0.5
         if any(buffer.yawns[name]):
             classes[name] = AttentionClass.DROWSY
-            # print("{} yawned".format(name))
-        elif ((0.6 <= mean_var <= 0.8) or any(buffer.nods[name])) and mean_orient >= 0.6:
+            print("{} : DROWSY".format(name))
+        elif ((mean_var>100) or any(buffer.nods[name])) and mean_orient >= 0.6:
             classes[name] = AttentionClass.INTERACTIVE
+            print("{} : INTERACTIVE".format(name))
         elif mean_orient >= 0.6:
             classes[name] = AttentionClass.ATTENTIVE
+            print("{} : ATTENTIVE".format(name))
         else:
             classes[name] = AttentionClass.INATTENTIVE
-
+            print("{} : INATTENTIVE".format(name))
         scores[name] = ((mean_var / 200) + 1 * mean_orient + 1 * (any(buffer.nods[name])) - 1 * any(
             buffer.yawns[name])) * 90
         # print("{} : {} : {}".format(name, classes[name], scores[name]))

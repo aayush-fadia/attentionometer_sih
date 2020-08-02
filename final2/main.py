@@ -26,7 +26,7 @@ def show_images(imgs):
 
 buffer = Buffer()
 frame = None
-cap = cv2.VideoCapture("../FinalCut.mp4")
+cap = cv2.VideoCapture("../Speaking_Shreyan.mp4")
 
 retvals = Queue()
 

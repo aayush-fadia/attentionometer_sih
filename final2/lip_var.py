@@ -38,7 +38,7 @@ def get_lip_dist(keypoints):
 
 
 def get_lip_variance(distances):
-    if len(distances) < 6:
+    if len(distances)==0:
         return 0
-    variance = np.var(list(distances[0:]))
+    variance = np.var(list(distances))
     return variance
