@@ -11,12 +11,14 @@ from buffers import Buffer
 from chopper import chop
 from classifier import classify
 from executor import process_and_upload
+from Database import DataBase
 
 plt.rcParams["figure.figsize"] = [10, 6]
 
 plt.ion()
 
 fig, ax = plt.subplots()
+
 
 
 def show_images(imgs):
@@ -38,12 +40,14 @@ def process_frame():
         master.map(process_and_upload, imgs, repeat(buffer))
     classes, attentions = classify(buffer)
     # RITIK IDHAR SE UTHA
+    db.insert_data(classes, attentions)
     retvals.put((classes, attentions))
     buffer.set_pressences()
 
 
 processingThread = Thread(target=process_frame)
 NAMES = ["Ritesh Sethi", "Ayush Apoorva", "Nitin GL", "Vivek Chopra", "Shallen@GL", "Shreyan Datta Chakrabort"]
+db = DataBase(NAMES)
 attentions = defaultdict(lambda: [])
 while True:
     ret, frame = cap.read()
