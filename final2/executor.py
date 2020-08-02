@@ -1,31 +1,37 @@
-from landmarks3d import get_face_keypoints, calculate_attention
+# from Database import DataBase
 from extract_name import get_name2
-from lip_var import get_lip_var2
-from collections import defaultdict, deque
-from multiprocessing import RLock
-from Database import DataBase
-import threading
+from landmarks3d import get_face_keypoints, calculate_attention, calculate_vector
+from lip_var import get_lip_dist, get_lip_variance
+from nodding import isNodding
+from yawn import isYawn
 
-lock = RLock()
-buffer = defaultdict(lambda: deque(maxlen=48))
-db = DataBase("Teacher")
-oldi = -1
-oldname = ""
 
-def process_and_upload(enumframes):
-    i, frame = enumframes
+# db = DataBase("Teacher")
 
-    name = get_name2(frame)
 
+def process_and_upload(frame, buffer):
+    name = buffer.match_name(get_name2(frame))
+    buffer.announce(name)
     landmarks = get_face_keypoints(frame)
     if landmarks is not None:
-        cur_attention = calculate_attention(landmarks)
-        variance, distance = get_lip_var2(buffer[name], landmarks)
-        if distance != -1:
-            with lock:
-                buffer[name].append(distance)
-        if variance != -1:
-            cur_attention += (0.001 * variance)
-        t1 = threading.Thread(target=db.insert_data, args=(name[0:-1], cur_attention))
-        t1.start()
-        print("Uploading {}attention for {}".format(cur_attention, name))
+        # print("Found Landmarks for {}".format(name))
+        # Primary Calculations
+        landmarks = landmarks[0]
+        cur_vect = calculate_vector(landmarks)
+        cur_orientation = calculate_attention(cur_vect)
+        dist = get_lip_dist(landmarks)
+        yawn = isYawn(landmarks)
+        # Buffer Primary Values
+        buffer.add_lip_dist(name, dist)
+        buffer.add_orientation_vector(name, cur_vect)
+        buffer.add_orientation_score(name, cur_orientation)
+        buffer.add_yawn(name, yawn)
+        # Secondary Calculations
+        variance = get_lip_variance(buffer.lip_distances[name])
+        nod = isNodding(buffer.orientation_vectors[name])
+        # Buffer Secondary Values
+        buffer.add_variance(name, variance)
+        buffer.add_nod(name, nod)
+        # t1 = threading.Thread(target=db.insert_data, args=(name[0:-1], cur_orientation))
+        # t1.start()
+        # print("Uploading {}attention for {}".format(cur_orientation, name))

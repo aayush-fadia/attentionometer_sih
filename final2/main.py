@@ -1,32 +1,64 @@
-import cv2
-from chopper import chop
-from executor import process_and_upload
+from collections import defaultdict
 from concurrent.futures.thread import ThreadPoolExecutor
-import numpy as np
-import pyscreenshot as ImageGrab
-import time
+from itertools import repeat
+from queue import Queue
+from threading import Thread
+
+import cv2
+import matplotlib.pyplot as plt
+
+from buffers import Buffer
+from chopper import chop
+from classifier import classify
+from executor import process_and_upload
+
+plt.rcParams["figure.figsize"] = [10, 6]
+
+plt.ion()
+
+fig, ax = plt.subplots()
+
 
 def show_images(imgs):
     for i, img in enumerate(imgs):
         cv2.imshow('img{}'.format(i), img)
 
-time.sleep(5)
-cap = None
-#cap = cv2.VideoCapture("glrec.mp4")
-i = 0
-is_live = True
-while is_live:
-    if is_live:
-        frame = ImageGrab.grab()
-        frame = cv2.cvtColor(np.array(frame),  cv2.COLOR_RGB2BGR)
-    else:
-        ret, frame = cap.read()
-    #cv2.imshow("frame", frame)
-    #cv2.waitKey(1)
-    if i > 10:
 
-        imgs = chop(frame)
-        with ThreadPoolExecutor() as master:
-            master.map(process_and_upload, enumerate(imgs))
+buffer = Buffer()
+frame = None
+cap = cv2.VideoCapture("../FinalCut.mp4")
 
-    i += 1
+retvals = Queue()
+
+
+def process_frame():
+    imgs = chop(frame)
+    buffer.reset_people()
+    with ThreadPoolExecutor() as master:
+        master.map(process_and_upload, imgs, repeat(buffer))
+    classes, attentions = classify(buffer)
+    # RITIK IDHAR SE UTHA
+    retvals.put((classes, attentions))
+    buffer.set_pressences()
+
+
+processingThread = Thread(target=process_frame)
+NAMES = ["Ritesh Sethi", "Ayush Apoorva", "Nitin GL", "Vivek Chopra", "Shallen@GL", "Shreyan Datta Chakrabort"]
+attentions = defaultdict(lambda: [])
+while True:
+    ret, frame = cap.read()
+    cv2.imshow('frame', frame)
+    cv2.waitKey(1)
+    if not processingThread.is_alive():
+        ax.cla()
+        while not retvals.empty():
+            classes, scores = retvals.get()
+            for key in scores:
+                attentions[key].append(scores[key])
+        for key in attentions:
+            ax.plot(attentions[key], label=key)
+        ax.legend()
+        plt.draw()
+        plt.pause(0.000001)
+        processingThread = Thread(target=process_frame)
+        processingThread.start()

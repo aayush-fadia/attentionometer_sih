@@ -3,22 +3,22 @@ import numpy as np
 
 # import matplotlib.pyplot as plt
 
-fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._3D, flip_input=False)
+fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._3D, flip_input=False, face_detector='dlib')
 
 
 def get_face_keypoints(frame):
     return fa.get_landmarks(frame)
 
 
-def calculate_attention(keypoints):
-    if keypoints is None:
-        return -1
-    keypoints = keypoints[0]
+def calculate_attention(vect):
+    return vect[2] / np.linalg.norm(vect)
+
+
+def calculate_vector(keypoints):
     mean_pos = np.mean(keypoints, 0)
     nose_pos = (keypoints[31] + keypoints[34]) / 2
     orientation_diff = nose_pos - mean_pos
-    # print("Attention:", orientation_diff[2] / np.linalg.norm(orientation_diff))
-    return orientation_diff[2] / np.linalg.norm(orientation_diff)
+    return orientation_diff
 
 # plt.ion()
 # fig = plt.figure(figsize=plt.figaspect(.5))
