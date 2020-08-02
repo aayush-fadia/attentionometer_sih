@@ -1,5 +1,10 @@
+from pyasn1.compat.octets import null
+from pyasn1.type.univ import Null
 import Levenshtein
 from datetime import datetime
+from statistics import mean
+
+
 
 def init_db():
     import pyrebase
@@ -16,55 +21,62 @@ def init_db():
 
 
 class DataBase:
-    def __init__(self, teacher_name: str) -> None:
-        self.teacher_name = teacher_name
+    def __init__(self) -> None:
+        # self.teacher_name = teacher_name
         self.db = init_db()
         self.db.remove()
-        self.counterDict = {}
-        self.avgList = {}
-        self.db.child("nameList").child("teacher_name").push(self.teacher_name)
-        self.db.child("online").push(True)
+        self.scoreDict = {}
+        
         self.NameList = []
-        self.id = str(datetime.now().strftime("-%d-%m-%Y-%H:%M:%S"))
+        self.id = str(datetime.now().strftime("%d-%m-%Y-%H:%M:%S"))
+        self.db.child("online").set(self.id)
 
-    def checkName(self, name):
-        distance = 100
+    def checkName(self, name: str):
+        parts = name.split()
         for n in self.NameList:
-            if(Levenshtein.distance(n, name) < 3):
+            n_split = n.split()
+            if Levenshtein.distance(n, name) < 5 or Levenshtein.distance(parts[0], n_split[0]) < 2:
                 return n
         self.NameList.append(name)
         return name
 
-    def insert_data(self, name, score):
+    def insert_data(self, name, category, score):
         name = self.checkName(name)
-        name = name + self.id
-        old_avg = 0
-        n = 1
+        student_data = {name : category}
+        self.db.child("Teacher").update(student_data)
         try:
-            old_avg = self.avgList[name]
-            n = self.counterDict[name]
-        except:
-            old_avg = score
-            self.counterDict[name] = n
+            self.scoreDict[name].append(score)
+        except KeyError:
+            self.scoreDict[name] = [score]
 
-        new_avg = old_avg + ((score - old_avg) / n)
-        self.avgList[name] = new_avg
-        data = {name: new_avg}
-        self.db.child(self.teacher_name).update(data)
-        self.counterDict[name] += 1
+        push = True
+        avg = 0
+        for ques in self.scoreDict.values():
+            if len(ques) == 0:
+                push = False
+                break
+            else:
+                avg += ques.pop(0)
+        if push:
+            self.db.child("means_score").set(avg/len(self.scoreDict))
+
+
 
     def end_ses(self):
-        self.db.child("online").push(False)
+        self.db.child("online").set("null")
 
 
 """import random
 import time
-db = DataBase("Teacher")
+db = DataBase()
 stlist = ["Surbhi", "Sauyma", "Aayush", "Praneeth", "Kanishka", "surbha", "sauwma", "ayush"]
-for i in range(10000):
+for i in range(200):
     for s in stlist:
         score = random.randrange(50, 100)
+        category = random.randrange(0, 3)
         if random.random() < 0.4:
             score -= 50
-        db.insert_data(s, score)
+        db.insert_data(s, category, score)
+    time.sleep(5)
+#db.end_ses()
 """
