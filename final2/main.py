@@ -47,7 +47,7 @@ def process_frame():
 
 processingThread = Thread(target=process_frame)
 NAMES = ["Ritesh Sethi", "Ayush Apoorva", "Nitin GL", "Vivek Chopra", "Shallen@GL", "Shreyan Datta Chakrabort"]
-db = DataBase(NAMES)
+db = DataBase()
 attentions = defaultdict(lambda: [])
 while True:
     ret, frame = cap.read()
