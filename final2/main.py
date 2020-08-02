@@ -35,6 +35,6 @@ while True:
     cv2.imshow('frame', frame)
     cv2.waitKey(1)
     if not processingThread.is_alive():
-        cv2.imshow('processing', frame)
+        #cv2.imshow('processing', frame)
         processingThread = Thread(target=process_frame)
         processingThread.start()

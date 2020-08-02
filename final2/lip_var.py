@@ -12,9 +12,13 @@ import numpy as np
 
 def get_tot_dist(mouth):
     mean_pos = np.sum(mouth, axis=0) / 12
-    upper_lip_dist = dist.euclidean(mean_pos, mouth[3])
-    lower_lip_dist = dist.euclidean(mean_pos, mouth[9])
-    return upper_lip_dist + lower_lip_dist
+    mean_pos = mean_pos[0:2]
+    upper_lip = mouth[3][0:2]
+    lower_lip = mouth[9][0:2]
+    upper_lip_dist = dist.euclidean(mean_pos, upper_lip)
+    lower_lip_dist = dist.euclidean(mean_pos, lower_lip)
+    hor = dist.euclidean(mouth[0][0:2],mouth[6][0:2])
+    return ((upper_lip_dist + lower_lip_dist)/hor)*100
 
 
 # def get_lip_var(all_frames):
@@ -34,7 +38,7 @@ def get_lip_dist(keypoints):
 
 
 def get_lip_variance(distances):
-    if len(distances) == 0:
-        return -1
-    variance = np.var(list(distances))
+    if len(distances) < 6:
+        return 0
+    variance = np.var(list(distances[0:]))
     return variance

@@ -1,13 +1,12 @@
 import threading
-
-from Database import DataBase
+#from Database import DataBase
 from extract_name import get_name2
 from landmarks3d import get_face_keypoints, calculate_attention, calculate_vector
 from lip_var import get_lip_dist, get_lip_variance
 from nodding import isNodding
 from yawn import isYawn
 
-db = DataBase("Teacher")
+#db = DataBase("Teacher")
 
 
 def process_and_upload(frame, buffer):
@@ -32,6 +31,6 @@ def process_and_upload(frame, buffer):
         # Buffer Secondary Values
         buffer.add_variance(name, variance)
         buffer.add_nod(name, nod)
-        t1 = threading.Thread(target=db.insert_data, args=(name[0:-1], cur_attention))
-        t1.start()
-        print("Uploading {}attention for {}".format(cur_attention, name))
+        #t1 = threading.Thread(target=db.insert_data, args=(name[0:-1], cur_attention))
+        #t1.start()
+        #print("Uploading {}attention for {}".format(cur_attention, name))
