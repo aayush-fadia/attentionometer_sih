@@ -26,7 +26,7 @@ def show_images(imgs):
 
 buffer = Buffer()
 frame = None
-cap = cv2.VideoCapture("../Speaking_Shreyan.mp4")
+cap = cv2.VideoCapture("../FinalCut.mp4")
 
 retvals = Queue()
 
@@ -36,8 +36,9 @@ def process_frame():
     buffer.reset_people()
     with ThreadPoolExecutor() as master:
         master.map(process_and_upload, imgs, repeat(buffer))
-    classes = classify(buffer)
-    retvals.put(classes)
+    classes, attentions = classify(buffer)
+    # RITIK IDHAR SE UTHA
+    retvals.put((classes, attentions))
     buffer.set_pressences()
 
 
