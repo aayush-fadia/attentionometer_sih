@@ -40,7 +40,8 @@ def process_frame():
         master.map(process_and_upload, imgs, repeat(buffer))
     classes, attentions = classify(buffer)
     # RITIK IDHAR SE UTHA
-    db.insert_data(classes, attentions)
+    dbt = Thread(target=db.insert_data,args=(classes, attentions))
+    dbt.start()
     retvals.put((classes, attentions))
     buffer.set_pressences()
 
