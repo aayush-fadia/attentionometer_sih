@@ -8,7 +8,6 @@
 # jaw -> (0, 17)
 from scipy.spatial import distance as dist
 import numpy as np
-from _collections import deque
 
 
 def get_tot_dist(mouth):
@@ -18,25 +17,24 @@ def get_tot_dist(mouth):
     return upper_lip_dist + lower_lip_dist
 
 
-def get_lip_var(all_frames):
-    distances = deque(maxlen=48)
-    (start, end) = 48, 60  # (48,60) -> outer mouth, (60,68) -> inner mouth
-    for shape in all_frames:
-        mouth = shape[start:end]
-        total_distance = get_tot_dist(mouth)
-        distances.append(total_distance)
-    variance = np.var(distances)
-    print("variance:", variance)
-    return variance
+# def get_lip_var(all_frames):
+#     distances = deque(maxlen=48)
+#     (start, end) = 48, 60  # (48,60) -> outer mouth, (60,68) -> inner mouth
+#     for shape in all_frames:
+#         mouth = shape[start:end]
+#         total_distance = get_tot_dist(mouth)
+#         distances.append(total_distance)
+#     variance = np.var(distances)
+#     print("variance:", variance)
+#     return variance
+
+def get_lip_dist(keypoints):
+    mouth = keypoints[48:60]
+    return get_tot_dist(mouth)
 
 
-def get_lip_var2(distances, current_keypoints):
-    if current_keypoints is None:
-        return -1, -1
-    current_keypoints = current_keypoints[0]
-    mouth = current_keypoints[48:60]
-    total_distance = get_tot_dist(mouth)
+def get_lip_variance(distances):
     if len(distances) == 0:
-        return -1, total_distance
-    variance = np.var(list(distances) + [total_distance])
-    return variance, total_distance
+        return -1
+    variance = np.var(list(distances))
+    return variance
