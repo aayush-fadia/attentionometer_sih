@@ -17,7 +17,7 @@ def classify(buffer):
     scores = defaultdict(lambda: 0)
     print(buffer.this_frame_people)
     for name in buffer.this_frame_people:
-        if sum(buffer.presences) < buffer.MAX_FRAMES / 2:
+        if sum(buffer.presences[name]) < buffer.MAX_FRAMES / 2:
             classes[name] = AttentionClass.UNKNOWN
             scores[name] = -1
             continue
@@ -42,7 +42,7 @@ def classify(buffer):
         buffer.add_attention_class(name, classes[name])
         for name in buffer.all_people:
             if name not in buffer.this_frame_people:
-                if sum(buffer.presences) < buffer.MAX_FRAMES / 2:
+                if sum(buffer.presences[name]) < buffer.MAX_FRAMES / 2:
                     classes[name] = AttentionClass.UNKNOWN
                     scores[name] = -1
                     continue
