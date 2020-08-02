@@ -1,6 +1,8 @@
 from collections import defaultdict, deque
 from threading import RLock
 
+import Levenshtein
+
 
 class Buffer:
     def __init__(self, MAX_FRAMES=20):
@@ -50,3 +52,11 @@ class Buffer:
                 self.presences[name].append(False)
             else:
                 self.presences[name].append(True)
+
+    def match_name(self, name):
+        parts = name.split()
+        for n in self.all_people:
+            n_split = n.split()
+            if Levenshtein.distance(n, name) < 5 or Levenshtein.distance(parts[0], n_split[0]) < 2:
+                return n
+        return name

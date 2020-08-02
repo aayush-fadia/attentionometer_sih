@@ -1,8 +1,11 @@
+import string
+
 import cv2
-import pytesseract
 import numpy as np
+import pytesseract
 
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+translation = str.maketrans('', '', string.punctuation)
 
 
 def prep2(crop):
@@ -50,4 +53,5 @@ def get_name2(frame):
     t, b, r = crop2(binary)
     frame = frame[t - 5:b + 5, 0:r]
     t2 = thresh2(frame)
-    return pytesseract.image_to_string(t2)
+    s = pytesseract.image_to_string(t2).strip()
+    return s.translate(translation)
