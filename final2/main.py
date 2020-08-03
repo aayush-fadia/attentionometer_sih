@@ -28,7 +28,7 @@ def show_images(imgs):
 
 buffer = Buffer()
 frame = None
-cap = cv2.VideoCapture("../FinalCut.mp4")
+cap = cv2.VideoCapture("../Speaking_Shreyan.mp4")
 
 retvals = Queue()
 
@@ -60,10 +60,6 @@ while True:
             classes, scores = retvals.get()
             for key in scores:
                 attentions[key].append(scores[key])
-        for key in attentions:
-            ax.plot(attentions[key], label=key)
-        ax.legend()
-        plt.draw()
-        plt.pause(0.000001)
+        
         processingThread = Thread(target=process_frame)
         processingThread.start()

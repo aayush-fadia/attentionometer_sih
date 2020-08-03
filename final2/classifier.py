@@ -23,21 +23,29 @@ def classify(buffer):
             continue
         mean_var = np.mean(buffer.lip_variances[name]) if len(buffer.lip_variances[name]) != 0 else 0
         mean_orient = np.mean(buffer.orientation_scores[name]) if len(buffer.orientation_scores[name]) != 0 else 0.5
-        if any(buffer.yawns[name]):
-            classes[name] = AttentionClass.DROWSY
-            print("{} : DROWSY".format(name))
-        elif ((mean_var > 100) or any(buffer.nods[name])) and mean_orient >= 0.6:
-            classes[name] = AttentionClass.INTERACTIVE
-            print("{} : INTERACTIVE".format(name))
-        elif mean_orient >= 0.6:
-            classes[name] = AttentionClass.ATTENTIVE
-            print("{} : ATTENTIVE".format(name))
+        
+        if mean_orient>=0.6:
+            if mean_var>100 or sum(buffer.nods[name])>=5:
+                classes[name] = AttentionClass.INTERACTIVE
+                print("{} : INTERACTIVE".format(name))
+            else:
+                classes[name] = AttentionClass.ATTENTIVE
+                print("{} : ATTENTIVE".format(name))    
         else:
-            classes[name] = AttentionClass.INATTENTIVE
-            print("{} : INATTENTIVE".format(name))
-        scores[name] = ((mean_var / 200) + 1 * mean_orient + 1 * (any(buffer.nods[name])) - 1 * any(
-            buffer.yawns[name])) * 90
-        # print("{} : {} : {}".format(name, classes[name], scores[name]))
+            if sum(buffer.yawns[name])>=3:
+                classes[name] = AttentionClass.DROWSY
+                print("{} : DROWSY".format(name))
+            else:
+                classes[name] = AttentionClass.INATTENTIVE
+                print("{} : INATTENTIVE".format(name))
+
+
+        var_bin = (mean_var > 100)
+        nod_bin = (sum(buffer.nods[name])>=5)
+        yawn_bin = (sum(buffer.yawns[name])>=3)
+
+        scores[name] = (var_bin*0.5 + mean_orient*1 + nod_bin*0.5 - yawn_bin*2 + 2)*25
+        
         buffer.add_attention_score(name, scores[name])
         buffer.add_attention_class(name, classes[name])
         for name in buffer.all_people:
